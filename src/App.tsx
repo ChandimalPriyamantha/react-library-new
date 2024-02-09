@@ -1,5 +1,4 @@
 import React from "react";
-
 import "./App.css";
 import { Navebar } from "./layouts/NavbarAndFooter/Navebar";
 import { Footer } from "./layouts/NavbarAndFooter/Footer";
