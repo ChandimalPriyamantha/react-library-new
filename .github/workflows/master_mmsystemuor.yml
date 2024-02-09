@@ -21,6 +21,11 @@ jobs:
         with:
           node-version: '20.x'
 
+      - name: npm test:ci
+        run: npm run test:ci
+        env:
+         CI: false
+
       - name: npm install, build, and test
         run: |
           npm install
