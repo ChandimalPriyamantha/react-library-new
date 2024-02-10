@@ -3,6 +3,7 @@ import BookModel from "../../models/BookModel";
 import { SpinerLoading } from "../Utils/SpinerLoading";
 import { StartReview } from "../Utils/StarsReviews";
 import React from 'react';
+import { ChekoutAndReviewBox } from "./ChekoutAndReviewBox";
 
 
 
@@ -58,7 +59,6 @@ export const BookCheckoutPage = () => {
       </div>
     );
   }
-
   return (
     <div>
       <div className="container d-none d-lg-block">
@@ -80,11 +80,12 @@ export const BookCheckoutPage = () => {
               <h2>{book?.title}</h2>
               <h5 className="text-primary">{book?.author}</h5>
               <p className="lead">{book?.description}</p>
-              <StartReview Rating={4} size={32}/>
+              <StartReview rating={-5} size={32}/>
             </div>
           </div>
+          <ChekoutAndReviewBox book={book} mobile={false}/>
         </div>
-        <hr />
+        <hr/>
       </div>
       <div className="container d-lg-none mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -104,9 +105,10 @@ export const BookCheckoutPage = () => {
                <h2>{book?.title}</h2>
                <h5 className='text-primary'>{book?.author}</h5>
                <p className='lead'>{book?.description}</p>
-               <StartReview Rating={4} size={32}/>
+               <StartReview rating={-5} size={32}/>
             </div>
         </div>
+        <ChekoutAndReviewBox book={book} mobile={true}/>
         <hr/>
       </div>
     </div>
