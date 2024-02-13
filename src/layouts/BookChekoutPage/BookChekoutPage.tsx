@@ -8,6 +8,7 @@ import ReviewModel from "../../models/ReviewModel";
 import userEvent from "@testing-library/user-event";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import { error } from "console";
+import { LatestReviews } from "./LatestReviews";
 
 
 
@@ -137,12 +138,13 @@ export const BookCheckoutPage = () => {
               <h2>{book?.title}</h2>
               <h5 className="text-primary">{book?.author}</h5>
               <p className="lead">{book?.description}</p>
-              <StartReview rating={-5} size={32}/>
+              <StartReview rating={totalStar} size={32}/>
             </div>
           </div>
           <ChekoutAndReviewBox book={book} mobile={false}/>
         </div>
         <hr/>
+        <LatestReviews reviews={review} bookId={book?.id} mobile={true}/>
       </div>
       <div className="container d-lg-none mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -162,11 +164,12 @@ export const BookCheckoutPage = () => {
                <h2>{book?.title}</h2>
                <h5 className='text-primary'>{book?.author}</h5>
                <p className='lead'>{book?.description}</p>
-               <StartReview rating={-5} size={32}/>
+               <StartReview rating={totalStar} size={32}/>
             </div>
         </div>
         <ChekoutAndReviewBox book={book} mobile={true}/>
         <hr/>
+        <LatestReviews reviews={review} bookId={book?.id} mobile={true}/>
       </div>
     </div>
   );
