@@ -9,10 +9,14 @@ import userEvent from "@testing-library/user-event";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import { error } from "console";
 import { LatestReviews } from "./LatestReviews";
+import { useOktaAuth } from "@okta/okta-react";
 
 
 
 export const BookCheckoutPage = () => {
+
+  const { authState } = useOktaAuth();
+
   const [book, setBook] = useState<BookModel>();
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState(null);
@@ -21,6 +25,9 @@ export const BookCheckoutPage = () => {
   const [review, setReview] = useState<ReviewModel[]>([])
   const [totalStar, setTotalStar] = useState(0);
   const [isLoadingReview, setIsLoadingReview] = useState(true);
+
+  // Loans Count State
+  const [currentLoansCount, setCurrentLoansCount] = useState(0);
 
 
 
