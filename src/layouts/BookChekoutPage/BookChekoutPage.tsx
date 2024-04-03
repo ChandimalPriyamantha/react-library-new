@@ -113,6 +113,8 @@ export const BookCheckoutPage = () => {
     })
   })
 
+  
+
   if (isLoading || isLoadingReview) {
     return <SpinerLoading />;
   }
