@@ -28,7 +28,7 @@ export const BookCheckoutPage = () => {
 
   // Loans Count State
   const [currentLoansCount, setCurrentLoansCount] = useState(0);
-
+  const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
 
 
   const bookId = window.location.pathname.split("/")[2];
@@ -113,6 +113,19 @@ export const BookCheckoutPage = () => {
     })
   })
 
+  useEffect(() => {
+       
+    const fetchUserCurrentLoans = async () => {
+
+
+    }
+
+    fetchUserCurrentLoans().catch((error: any) => {
+      setIsLoadingCurrentLoansCount(false);
+      setHttpError(error.message);
+    })
+
+  });
   
 
   if (isLoading || isLoadingReview) {
