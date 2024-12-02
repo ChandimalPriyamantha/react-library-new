@@ -30,13 +30,18 @@ export const BookCheckoutPage = () => {
   const [currentLoansCount, setCurrentLoansCount] = useState(0);
   const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
 
+  // Is Book Checj Out>
+  const [isCheckedOut, setIsCheckedOut] = useState(false);
+  const [isLoadingBookCheckedOut, setIsLoadingBookCheckOut] = useState(true);
+
+
 
   const bookId = window.location.pathname.split("/")[2];
 
   useEffect(() => {
     const fetchBook = async () => {
       const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
-     
+
       const response = await fetch(baseUrl);
 
       if (!response.ok) {
@@ -44,8 +49,8 @@ export const BookCheckoutPage = () => {
       }
 
       const responseJson = await response.json();
-     
-     
+
+
 
       const loadedBook: BookModel = {
         id: responseJson.id,
@@ -68,22 +73,22 @@ export const BookCheckoutPage = () => {
   }, []);
 
   useEffect(() => {
-    const fetchBookReviews = async () =>{
+    const fetchBookReviews = async () => {
       const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}`;
       const responseReviews = await fetch(reviewUrl);
 
-      if(!responseReviews.ok){
+      if (!responseReviews.ok) {
         throw new Error("Somthing wrong..!");
       }
 
-      const responseJsonReviews =  await responseReviews.json();
+      const responseJsonReviews = await responseReviews.json();
       const responseData = responseJsonReviews._embedded.reviews;
 
       const loadedReviews: ReviewModel[] = [];
 
       let weightedStarReviews: number = 0;
 
-      for(const key in responseData){
+      for (const key in responseData) {
         loadedReviews.push({
           id: responseData[key].id,
           userEmail: responseData[key].userEmail,
@@ -98,7 +103,7 @@ export const BookCheckoutPage = () => {
       }
 
       if (loadedReviews) {
-        const round  = (Math.round(weightedStarReviews/loadedReviews.length) * 2/2).toFixed(1);
+        const round = (Math.round(weightedStarReviews / loadedReviews.length) * 2 / 2).toFixed(1);
         setTotalStar(Number(round));
       }
 
@@ -106,7 +111,7 @@ export const BookCheckoutPage = () => {
       setIsLoadingReview(false);
     };
 
-    fetchBookReviews().catch((error: any)=>{
+    fetchBookReviews().catch((error: any) => {
       setIsLoadingReview(false);
       setHttpError(error.message);
 
@@ -114,27 +119,27 @@ export const BookCheckoutPage = () => {
   })
 
   useEffect(() => {
-       
+
     const fetchUserCurrentLoans = async () => {
-      
-      if(authState && authState.isAuthenticated){
-        const url =  `http://localhost:8080/api/books/secure/currentloans/count`;
+
+      if (authState && authState.isAuthenticated) {
+        const url = `http://localhost:8080/api/books/secure/currentloans/count`;
         const requestOptions = {
-             
-          method:'GET',
-          headers:{
-               Authorization:`Bearer ${authState.accessToken?.accessToken}`,
-               'Content-Type' : 'application/json'
+
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+            'Content-Type': 'application/json'
           }
 
         };
-        const currentLoanCountResponse  = await fetch(url, requestOptions);
-        if (!currentLoanCountResponse.ok){
+        const currentLoanCountResponse = await fetch(url, requestOptions);
+        if (!currentLoanCountResponse.ok) {
           throw new Error("Somthing went wrong!")
         }
         const currentLoanCountResponseJson = await currentLoanCountResponse.json();
         setCurrentLoansCount(currentLoanCountResponseJson);
-        
+
       }
 
       setIsLoadingCurrentLoansCount(false);
@@ -146,10 +151,41 @@ export const BookCheckoutPage = () => {
       setHttpError(error.message);
     })
 
-  },[authState]);
-  
+  }, [authState]);
 
-  if (isLoading || isLoadingReview) {
+  useEffect(() => {
+    const fetchUserCheckoutBook = async () => {
+      if (authState && authState.isAuthenticated) {
+        const url = `http://localhost:8080/api/books/secure/ischeckedout/byuser/?bookId=${bookId}`;
+        const requestOptions = {
+          method: `GET`,
+          headers: {
+            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        };
+        const bookCheckOut = await fetch(url, requestOptions);
+
+        if (!bookCheckOut.ok) {
+          throw new Error('Somthing went wrong!');
+        }
+
+        const bookCheckOutResponseJson = await bookCheckOut.json();
+        setIsCheckedOut(bookCheckOutResponseJson);
+
+      }
+      setIsLoadingBookCheckOut(false);
+
+    }
+
+    fetchUserCheckoutBook().catch((error: any) => {
+      setIsLoadingBookCheckOut(false);
+      setHttpError(error.message);
+    })
+  }, [authState, bookId]);
+
+
+  if (isLoading || isLoadingReview ||isLoadingBookCheckedOut ) {
     return <SpinerLoading />;
   }
 
@@ -181,13 +217,13 @@ export const BookCheckoutPage = () => {
               <h2>{book?.title}</h2>
               <h5 className="text-primary">{book?.author}</h5>
               <p className="lead">{book?.description}</p>
-              <StartReview rating={totalStar} size={32}/>
+              <StartReview rating={totalStar} size={32} />
             </div>
           </div>
-          <ChekoutAndReviewBox book={book} mobile={false} currentLoansCount={currentLoansCount}/>
+          <ChekoutAndReviewBox book={book} mobile={false} currentLoansCount={currentLoansCount} />
         </div>
-        <hr/>
-        <LatestReviews reviews={review} bookId={book?.id} mobile={true}/>
+        <hr />
+        <LatestReviews reviews={review} bookId={book?.id} mobile={true} />
       </div>
       <div className="container d-lg-none mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -203,16 +239,16 @@ export const BookCheckoutPage = () => {
           )}
         </div>
         <div className='mt-4'>
-            <div className='ml-2'>
-               <h2>{book?.title}</h2>
-               <h5 className='text-primary'>{book?.author}</h5>
-               <p className='lead'>{book?.description}</p>
-               <StartReview rating={totalStar} size={32}/>
-            </div>
+          <div className='ml-2'>
+            <h2>{book?.title}</h2>
+            <h5 className='text-primary'>{book?.author}</h5>
+            <p className='lead'>{book?.description}</p>
+            <StartReview rating={totalStar} size={32} />
+          </div>
         </div>
-        <ChekoutAndReviewBox book={book} mobile={true} currentLoansCount={currentLoansCount}/>
-        <hr/>
-        <LatestReviews reviews={review} bookId={book?.id} mobile={true}/>
+        <ChekoutAndReviewBox book={book} mobile={true} currentLoansCount={currentLoansCount} />
+        <hr />
+        <LatestReviews reviews={review} bookId={book?.id} mobile={true} />
       </div>
     </div>
   );
