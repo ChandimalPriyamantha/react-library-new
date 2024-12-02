@@ -116,7 +116,28 @@ export const BookCheckoutPage = () => {
   useEffect(() => {
        
     const fetchUserCurrentLoans = async () => {
+      
+      if(authState && authState.isAuthenticated){
+        const url =  `http://localhost:8080/api/books/secure/currentloans/count`;
+        const requestOptions = {
+             
+          method:'GET',
+          headers:{
+               Authorization:`Bearer ${authState.accessToken?.accessToken}`,
+               'Content-Type' : 'application/json'
+          }
 
+        };
+        const currentLoanCountResponse  = await fetch(url, requestOptions);
+        if (!currentLoanCountResponse.ok){
+          throw new Error("Somthing went wrong!")
+        }
+        const currentLoanCountResponseJson = await currentLoanCountResponse.json();
+        setCurrentLoansCount(currentLoanCountResponseJson);
+        
+      }
+
+      setIsLoadingCurrentLoansCount(false);
 
     }
 
@@ -125,7 +146,7 @@ export const BookCheckoutPage = () => {
       setHttpError(error.message);
     })
 
-  });
+  },[authState]);
   
 
   if (isLoading || isLoadingReview) {
@@ -163,7 +184,7 @@ export const BookCheckoutPage = () => {
               <StartReview rating={totalStar} size={32}/>
             </div>
           </div>
-          <ChekoutAndReviewBox book={book} mobile={false}/>
+          <ChekoutAndReviewBox book={book} mobile={false} currentLoansCount={currentLoansCount}/>
         </div>
         <hr/>
         <LatestReviews reviews={review} bookId={book?.id} mobile={true}/>
@@ -189,7 +210,7 @@ export const BookCheckoutPage = () => {
                <StartReview rating={totalStar} size={32}/>
             </div>
         </div>
-        <ChekoutAndReviewBox book={book} mobile={true}/>
+        <ChekoutAndReviewBox book={book} mobile={true} currentLoansCount={currentLoansCount}/>
         <hr/>
         <LatestReviews reviews={review} bookId={book?.id} mobile={true}/>
       </div>
