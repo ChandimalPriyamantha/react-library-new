@@ -156,9 +156,9 @@ export const BookCheckoutPage = () => {
   useEffect(() => {
     const fetchUserCheckoutBook = async () => {
       if (authState && authState.isAuthenticated) {
-        const url = `http://localhost:8080/api/books/secure/ischeckedout/byuser/?bookId=${bookId}`;
+        const url = `http://localhost:8080/api/books/secure/ischeckedout/byuser?bookId=${bookId}`;
         const requestOptions = {
-          method: `GET`,
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${authState.accessToken?.accessToken}`,
             'Content-Type': 'application/json'
@@ -182,10 +182,10 @@ export const BookCheckoutPage = () => {
       setIsLoadingBookCheckOut(false);
       setHttpError(error.message);
     })
-  }, [authState, bookId]);
+  }, [authState]);
 
 
-  if (isLoading || isLoadingReview ||isLoadingBookCheckedOut ) {
+  if (isLoading || isLoadingReview ||isLoadingCurrentLoansCount || isLoadingBookCheckedOut ) {
     return <SpinerLoading />;
   }
 
@@ -196,6 +196,8 @@ export const BookCheckoutPage = () => {
       </div>
     );
   }
+
+  
   return (
     <div>
       <div className="container d-none d-lg-block">
@@ -220,7 +222,8 @@ export const BookCheckoutPage = () => {
               <StartReview rating={totalStar} size={32} />
             </div>
           </div>
-          <ChekoutAndReviewBox book={book} mobile={false} currentLoansCount={currentLoansCount} />
+          <ChekoutAndReviewBox book={book} mobile={false} currentLoansCount={currentLoansCount} 
+          isAuthenticated={authState?.isAuthenticated} isCheckOut={isCheckedOut} />
         </div>
         <hr />
         <LatestReviews reviews={review} bookId={book?.id} mobile={true} />
@@ -246,7 +249,8 @@ export const BookCheckoutPage = () => {
             <StartReview rating={totalStar} size={32} />
           </div>
         </div>
-        <ChekoutAndReviewBox book={book} mobile={true} currentLoansCount={currentLoansCount} />
+        <ChekoutAndReviewBox book={book} mobile={true} currentLoansCount={currentLoansCount} 
+        isAuthenticated={authState?.isAuthenticated} isCheckOut={isCheckedOut}/>
         <hr />
         <LatestReviews reviews={review} bookId={book?.id} mobile={true} />
       </div>
