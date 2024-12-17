@@ -171,22 +171,6 @@ export const BookCheckoutPage = () => {
     });
   }, [authState]);
 
-  async function checkoutBook() {
-    const url = `http://localhost:8080/api/books/secure/checkout?bookId=${book?.id}`;
-    const requestOptions = {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
-        "Content-Type": "application/json",
-      },
-    };
-    const checkoutResponse = await fetch(url, requestOptions);
-    if (!checkoutResponse.ok) {
-      throw new Error("Somthing went wrong!");
-    }
-    setIsCheckedOut(true);
-  }
-
   if (
     isLoading ||
     isLoadingReview ||
@@ -202,6 +186,23 @@ export const BookCheckoutPage = () => {
         <p>{httpError}</p>
       </div>
     );
+  }
+
+  async function checkoutBook() {
+    const url = `http://localhost:8080/api/books/secure/checkout?bookId=${book?.id}`;
+    console.log("run");
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+        "Content-Type": "application/json",
+      }
+    };
+    const checkoutResponse = await fetch(url, requestOptions);
+    if (!checkoutResponse.ok) {
+      throw new Error("Somthing went wrong!");
+    }
+    setIsCheckedOut(true);
   }
 
   return (
