@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import BookModel from "../../models/BookModel";
 
+// This component is responsible for rendering the checkout and review box.
 export const ChekoutAndReviewBox: React.FC<{
   book: BookModel | undefined,
   mobile: boolean,
   currentLoansCount:number,
   isAuthenticated: any, isCheckOut: boolean,
   checkoutBook: any
-}> = (props) => {
+}> = (props) => { 
 
   function buttonRender() {
     if(props.isAuthenticated) {
